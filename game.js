@@ -100,7 +100,6 @@ class PlayScene extends Phaser.Scene {
         this.physics.world.setBounds(0, -20000, this.cameras.main.width, 40000);
 
         this.cursor = this.input.keyboard.createCursorKeys();
-        this.cameras.main.startFollow(this.hero, false, 1, 0.05, 0, -2000);
 
         for (let i = 0; i < 3; i++) {
             this.cloudCreate(this.cameras.main.height - i * 200);
@@ -138,14 +137,32 @@ class PlayScene extends Phaser.Scene {
         this.bgm.setVolume(0.5);
         this.jumpSound.setVolume(0.7);
         this.collisionSound.setVolume(1); 
+
+        this.lastPlatformY = this.cameras.main.height;
+        this.maxHeightReached = this.cameras.main.height;
         
     }
 
     update() {
         this.cameras.main.setBounds(0, -this.hero.yChange, this.cameras.main.width, this.cameras.main.height + this.hero.yChange);
 
-        this.cameraYMin = Math.min(this.cameraYMin, this.hero.y - this.cameras.main.height + 130);
-        this.cameras.main.scrollY = this.cameraYMin;
+
+        // 根据更高的角色移动camera
+        const higherHeroY = Math.min(this.hero.y, this.hero2.y);
+
+        if (typeof this.maxHeightReached === 'undefined' || higherHeroY < this.maxHeightReached) {
+            this.maxHeightReached = higherHeroY;
+        }
+        
+        this.hero.yChange = Math.max(this.hero.yChange, Math.abs(this.hero.y - this.hero.yOrig));
+        this.hero2.yChange = Math.max(this.hero2.yChange, Math.abs(this.hero2.y - this.hero2.yOrig));
+        
+        const higherYChange = Math.max(this.hero.yChange, this.hero2.yChange);
+        this.cameras.main.setBounds(0, -higherYChange, this.cameras.main.width, this.cameras.main.height + higherYChange);
+        
+        // 使用 maxHeightReached 来设置相机的 scrollY
+        this.cameras.main.scrollY = this.maxHeightReached - this.cameras.main.height + 300;
+
 
         let keys = this.input.keyboard.addKeys('W,A,S,D');
 
@@ -189,10 +206,19 @@ class PlayScene extends Phaser.Scene {
 
 
 
-        if (this.hero.y > this.cameras.main.scrollY + this.cameras.main.height) {
+        this.platforms.getChildren().forEach(platform => {
+            if (this.hero.body.touching.down && platform.getBounds().contains(this.hero.x, this.hero.y - 1)) {
+                this.lastPlatformY = platform.y;
+            }
+        });
+    
+        // 检查任意一个角色是否已经掉落出屏幕下方
+        if (this.hero.y > this.cameras.main.scrollY + this.cameras.main.height || 
+            this.hero2.y > this.cameras.main.scrollY + this.cameras.main.height) {
             this.bgm.stop();
             this.scene.restart();
         }
+
 
         
         
