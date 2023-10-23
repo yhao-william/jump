@@ -1,3 +1,9 @@
+// 1. add obstacles/enemies/garbage shooter
+// 2. add more types of platform: one-time platform - cloud/SOLID platforms cant pass through/booster platform/ moving platform/ cant jump too high platform
+// 3. add power-up system for collecting milk/fish (bonus: airbone/non gravity/etc)
+// 4. add ending system for the game: cats go higher so the platform becomes looser/ending gate at far ending
+// 5. different colors for kittens
+
 class PlayScene extends Phaser.Scene {
     constructor() {
         super({ key: 'PlayScene' });
@@ -213,8 +219,8 @@ class PlayScene extends Phaser.Scene {
         });
     
         // 检查任意一个角色是否已经掉落出屏幕下方
-        if (this.hero.y > this.cameras.main.scrollY + this.cameras.main.height || 
-            this.hero2.y > this.cameras.main.scrollY + this.cameras.main.height) {
+        if (this.hero.y > this.cameras.main.scrollY + this.cameras.main.height+110 || 
+            this.hero2.y > this.cameras.main.scrollY + this.cameras.main.height+110) {
             this.bgm.stop();
             this.scene.restart();
         }
