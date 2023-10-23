@@ -140,9 +140,9 @@ class PlayScene extends Phaser.Scene {
         this.bgm = this.sound.add('bgm', { loop: true });
         this.jumpSound = this.sound.add('jump');
         this.collisionSound = this.sound.add('collision');
-        this.bgm.setVolume(0.5);
-        this.jumpSound.setVolume(0.7);
-        this.collisionSound.setVolume(1); 
+        this.bgm.setVolume(0.25);
+        this.jumpSound.setVolume(0.35);
+        this.collisionSound.setVolume(0.5); 
 
         this.lastPlatformY = this.cameras.main.height;
         this.maxHeightReached = this.cameras.main.height;
